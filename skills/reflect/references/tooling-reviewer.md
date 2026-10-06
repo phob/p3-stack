@@ -32,7 +32,7 @@ Scan for:
 
 Findings must point to skills, tools, or MCPs invoked in this transcript. Speculative routings to skills the parent never opened do not count. To check whether a skill was used, scan the transcript for:
 
-- File reads of any `SKILL.md` (project `.agents/skills/`, user-level `~/.agents/skills/`, or repo-relative skill paths)
+- File reads of any `SKILL.md` (project `.claude/skills/` or `.agents/skills/`, user-level `~/.claude/skills/` or `~/.agents/skills/`, or repo-relative skill paths)
 - `delegate_task` briefs that name a skill path
 - Tool calls (shell, search, MCP, etc.) that match a skill's documented commands
 

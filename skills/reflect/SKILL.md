@@ -1,7 +1,6 @@
 ---
 name: reflect
 description: Delegate three parallel reviewers over the active thread, surface learnings, and route each to a concrete edit on an existing skill. Use when the user says reflect.
-disable-model-invocation: true
 ---
 
 # Reflect

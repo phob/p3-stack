@@ -22,7 +22,7 @@ If you are a delegated worker, your brief names exactly one file. Write only tha
 | `agent-transcripts/*.jsonl` mining | `t3_thread_read`, `t3_thread_search`; `t3_queue_list`/`t3_queue_read`/`t3_queue_edit`/`t3_queue_reorder`/`t3_queue_cancel`/`t3_queue_promote_to_steer` for queued input. |
 | `AskQuestion` | Ask plainly in the thread. `t3_pending_request_list`/`t3_pending_request_read`/`t3_pending_request_respond` answer questions in other threads. |
 | `control-ui`, `control-cli` (from cursor-team-kit) | `preview_*` browser tools and `device_*` simulator tools; `preview_recording_start`/`preview_recording_stop` and `device_screenshot` for evidence; `browser.preview` shows a file to the user. |
-| `~/.cursor/rules/pstack-models.mdc`, `/add-plugin` | `setup-p3` writes `p3-models.md`; install is a symlink of `skills/*` into `~/.agents/skills/` (see README). |
+| `~/.cursor/rules/pstack-models.mdc`, `/add-plugin` | `setup-p3` writes `p3-models.md`; install links `skills/*` into both `~/.claude/skills/` and `~/.agents/skills/` (see README). |
 | `poteto-mode`, `poteto-agent`, `poteto-help`, `setup-pstack` | `p3-mode`, `agents/p3-agent.md`, `p3-help`, `setup-p3`. |
 | Cursor custom modes ("press option+enter") | Skills are invoked by name (`/p3-mode`). No mode toggles. |
 
@@ -40,7 +40,8 @@ Keep these names exactly.
 
 - Thin over complete. Keep the shortest file that still changes behavior. Cut Cursor-only edge-case protocol and forge-specific branches before cutting any rule.
 - pstack's voice: terse, declarative, lowercase-friendly, no filler.
-- Frontmatter: `name`, one-line `description`, `disable-model-invocation: true` where the source has it. Drop Cursor UI fields (`icon`, `color`, `mode`, `reminder`).
+- Frontmatter: `name`, one-line `description`. Drop Cursor UI fields (`icon`, `color`, `mode`, `reminder`).
+- `p3-mode`, `setup-p3`, and every `principle-*` carry `disable-model-invocation: true`. Every other skill stays model-invocable: p3-mode routes to it, and Claude Code's Skill tool refuses flagged skills. Principles stay flagged so their descriptions don't load into every session; skills reach them by reading `../principle-<name>/SKILL.md`, never through the Skill tool.
 - Use T3 tool names exactly: `delegate_task`, `task_status`, `watch_pull_request`, `link_pull_request`, `schedule_task`, `t3_thread_launch`, `t3_thread_read`, `t3_thread_search`, `preview_*`, `device_*`.
 - Delegation briefs are self-contained. T3 child agents get only the brief, never the parent's context. Say this where pstack says "every brief stands alone".
 - Never bullet a Cursor tool into a skill, even as a fallback.
@@ -50,6 +51,10 @@ Keep these names exactly.
 - `skills/<name>/SKILL.md` is a skill. `skills/principle-*/SKILL.md` are the short principles.
 - `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`.
 - `agents/` holds prompt briefs for delegated roles (`p3-agent.md`, `comment-sicko.md`), not harness agent definitions.
+
+## Skill locations
+
+Claude Code reads `.claude/skills/` (user `~/.claude/skills/` and project). Codex-style tools read `.agents/skills/`. The installer links into both. Skills that create skills write to `.claude/skills/<name>/`. To find an existing skill, look in `.claude/skills/` first, then `.agents/skills/`.
 
 ## T3 tool quick reference
 
@@ -67,4 +72,4 @@ Keep these names exactly.
 
 1. Every step names a T3 mechanism or a vendor-neutral habit. Grep for `Cursor`, `Task tool`, `subagent_type`, `cloud agent`, `.cursor`, `agent-transcripts`, `AskQuestion`, `icon:`, `claude-`, `grok-`, `gpt-`, `/loop`. None may remain.
 2. It is shorter than the pstack source unless the T3 rewrite genuinely needs the lines.
-3. Frontmatter matches the rules above, and references to other skills resolve to files in this repo.
+3. Frontmatter matches the rules above, and references to other skills resolve to files in this repo. No skill except `p3-mode`, `setup-p3`, and `principle-*` carries `disable-model-invocation: true`.

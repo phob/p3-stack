@@ -1,7 +1,6 @@
 ---
 name: automate-me
 description: "Use for \"automate me\", \"create/update/refresh my -mode skill\", \"turn/capture my preferences or working style into a skill\", or wanting agents to follow how the user works. Drafts or revises a personal -mode skill via the authoring-a-skill playbook + unslop, optionally pulling fresh evidence from recent threads."
-disable-model-invocation: true
 ---
 
 # Automate me
@@ -14,7 +13,7 @@ This skill orchestrates three others: an inline mining pass (see step 1), the `a
 
 ### 0. Check for an existing skill
 
-Look recursively for `.agents/skills/**/*-mode/SKILL.md` and `~/.agents/skills/*-mode/SKILL.md` matching the user's handle. Mode skills can live in a personal category directory (`.agents/skills/<handle>/`), not only at the top level. If one exists, confirm intent by asking in the thread (unless they already said "update my skill" or similar):
+Look recursively for `{.claude,.agents}/skills/**/*-mode/SKILL.md` in the project and `~/{.claude,.agents}/skills/*-mode/SKILL.md` matching the user's handle. Mode skills can live in a personal category directory (`.claude/skills/<handle>/`), not only at the top level. If one exists, confirm intent by asking in the thread (unless they already said "update my skill" or similar):
 
 - Update the existing skill (default for repeat runs)
 - Start fresh (rare, ask why before doing it)
@@ -66,10 +65,10 @@ The **p3-mode** skill shows the shape. Read it for granularity. Don't copy its c
 
 Use the `authoring-a-skill` playbook to author the skill. Placement:
 
-- Path: preserve an existing mode skill's category. For a new mode, use `.agents/skills/<handle>/<handle>-mode/SKILL.md` when the repo has an established personal category for that handle. Otherwise default to `.agents/skills/<handle>-mode/SKILL.md` in the project (or `~/.agents/skills/<handle>-mode/` if the user prefers a personal skill).
+- Path: preserve an existing mode skill's category. For a new mode, use `.claude/skills/<handle>/<handle>-mode/SKILL.md` when the repo has an established personal category for that handle. Otherwise default to `.claude/skills/<handle>-mode/SKILL.md` in the project (or `~/.claude/skills/<handle>-mode/` if the user prefers a personal skill).
 - Handle: the user's first name or chosen identifier.
 - Frontmatter `description`: trigger on their name + `/<handle>-mode` + "work in their style", not on generic keywords like "write code" or "review PR".
-- Frontmatter `disable-model-invocation: true` by default. Opt out only if the user explicitly wants their mode to apply on every turn.
+- Frontmatter `disable-model-invocation: true` by default. The flag keeps the mode user-only: the model and delegated workers can't invoke it. Opt out only if the user explicitly wants their mode to apply on every turn.
 
 ### 5. Iterate on prose
 
