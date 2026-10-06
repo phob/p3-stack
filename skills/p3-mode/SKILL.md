@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # P3 mode
 
-Skills are invoked by name (`/p3-mode`). There are no mode toggles.
+Skills are invoked by name (`/p3-mode`). There are no mode toggles. The workflows this file routes to are model-invocable: when a trigger fires, load the skill through the harness's skill mechanism. The principle-* leaves are not, so they stay out of every session's context: read `../principle-<name>/SKILL.md`, next to this skill's folder. Never paraphrase a skill from memory.
 
 ## Non-negotiables
 

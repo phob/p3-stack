@@ -1,7 +1,6 @@
 ---
 name: make-bot-ui
 description: "Use when building a custom UI (page, dashboard, buttons) that should wake the agent over a webhook, when the user must provide a webhook secret, or when exposing that UI on Tailscale."
-disable-model-invocation: true
 ---
 
 # How to make a bot UI

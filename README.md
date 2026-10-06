@@ -19,7 +19,7 @@ cd p3-stack
 ./install.sh
 ```
 
-`install.sh` links every `skills/*` directory into `~/.agents/skills/`, where T3 Code reads skills. Use `./install.sh --project /path/to/repo` to install into a project's `.agents/skills/` instead.
+`install.sh` links every `skills/*` directory into `~/.claude/skills/` (Claude Code) and `~/.agents/skills/` (Codex-style tools), where T3 Code's agents read skills. Use `./install.sh --project /path/to/repo` to install into a project's `.claude/skills/` and `.agents/skills/` instead.
 
 On Windows, use PowerShell, not `install.sh` (Git Bash copies instead of linking):
 
