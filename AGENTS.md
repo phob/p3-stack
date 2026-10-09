@@ -23,7 +23,7 @@ If you are a delegated worker, your brief names exactly one file. Write only tha
 | `AskQuestion` | Ask plainly in the thread. `t3_pending_request_list`/`t3_pending_request_read`/`t3_pending_request_respond` answer questions in other threads. |
 | `control-ui`, `control-cli` (from cursor-team-kit) | `preview_*` browser tools and `device_*` simulator tools; `preview_recording_start`/`preview_recording_stop` and `device_screenshot` for evidence; `browser.preview` shows a file to the user. |
 | `~/.cursor/rules/pstack-models.mdc`, `/add-plugin` | `setup-p3` writes `p3-models.md`; install links `skills/*` into both `~/.claude/skills/` and `~/.agents/skills/` (see README). |
-| `poteto-mode`, `poteto-agent`, `poteto-help`, `setup-pstack` | `p3-mode`, `agents/p3-agent.md`, `p3-help`, `setup-p3`. |
+| `poteto-mode`, `poteto-agent`, `poteto-help`, `setup-pstack` | `p3-mode`, `skills/p3-mode/references/p3-agent.md`, `p3-help`, `setup-p3`. |
 | Cursor custom modes ("press option+enter") | Skills are invoked by name (`/p3-mode`). No mode toggles. |
 
 Everything else in pstack transfers as written: the principles, the playbook shapes, the brief template, the reply style, the autonomy rules. Adopt it.
@@ -45,12 +45,16 @@ Keep these names exactly.
 - Use T3 tool names exactly: `delegate_task`, `task_status`, `watch_pull_request`, `link_pull_request`, `schedule_task`, `t3_thread_launch`, `t3_thread_read`, `t3_thread_search`, `preview_*`, `device_*`.
 - Delegation briefs are self-contained. T3 child agents get only the brief, never the parent's context. Say this where pstack says "every brief stands alone".
 - Never bullet a Cursor tool into a skill, even as a fallback.
+- Only `skills/` is installed, so every file a skill names lives inside `skills/`. Backtick paths are relative to the skill's folder; markdown links are relative to the file. Outside `p3-mode`, link a principle as `[name](../principle-<name>/SKILL.md)`.
+- A delegate never resolves a relative path. Paste the file's text into its brief, or give an absolute path.
+- `p3-models.md` is read from the project root, else `~/.agents/p3-models.md`. Say so wherever a skill first names it.
+- Repo instructions live in AGENTS.md or CLAUDE.md. Name both.
 
 ## Layout
 
 - `skills/<name>/SKILL.md` is a skill. `skills/principle-*/SKILL.md` are the short principles.
 - `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`.
-- `agents/` holds prompt briefs for delegated roles (`p3-agent.md`, `comment-sicko.md`), not harness agent definitions.
+- Prompt briefs for delegated roles live in the skill that sends them: `skills/p3-mode/references/p3-agent.md`, `skills/no-comments/references/comment-sicko.md`. They are not harness agent definitions.
 
 ## Skill locations
 
@@ -73,3 +77,4 @@ Claude Code reads `.claude/skills/` (user `~/.claude/skills/` and project). Code
 1. Every step names a T3 mechanism or a vendor-neutral habit. Grep for `Cursor`, `Task tool`, `subagent_type`, `cloud agent`, `.cursor`, `agent-transcripts`, `AskQuestion`, `icon:`, `claude-`, `grok-`, `gpt-`, `/loop`. None may remain.
 2. It is shorter than the pstack source unless the T3 rewrite genuinely needs the lines.
 3. Frontmatter matches the rules above, and references to other skills resolve to files in this repo. No skill except `p3-mode`, `setup-p3`, and `principle-*` carries `disable-model-invocation: true`.
+4. `scripts/verify-routing.ps1 -StaticOnly` passes.

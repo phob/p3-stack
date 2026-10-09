@@ -1,10 +1,10 @@
 # Architect runner prompt
 
-The orchestrator passes this file through to every parallel candidate runner as its `delegate_task` brief during Phase B, filling in the variable inputs around it: the task, the Phase A grounding artifacts, the isolated working directory, and the path to write outputs. The working directory is a git worktree when available, otherwise a per-runner subdirectory under the sketch dir. What matters is independence between candidates.
+The orchestrator passes this file through to every parallel candidate runner as its `delegate_task` brief during Phase B, filling in the variable inputs around it: the task, the Phase A grounding artifacts, the absolute path of the architect skill folder, the isolated working directory, and the path to write outputs. The working directory is a git worktree when available, otherwise a per-runner subdirectory under the sketch dir. What matters is independence between candidates.
 
-You are producing one candidate design in architect's parallel exploration. Read the **architect** skill in full first. That's the workflow you're inside. Output a candidate design package: type sketch, function signatures, module map, and prose rationale shaped per [`references/rationale-template.md`](references/rationale-template.md).
+You are producing one candidate design in architect's parallel exploration. Read the architect skill's `SKILL.md` in full first, in the folder your brief names. That's the workflow you're inside. Output a candidate design package: type sketch, function signatures, module map, and prose rationale shaped per the rationale template in your brief.
 
-Apply the following discipline. The orchestrator compares candidates on these axes to pick a base.
+Apply the following discipline. The orchestrator compares candidates on these axes to pick a base. Each named principle is a leaf at `../principle-<name>/SKILL.md`, relative to the architect folder. Read the leaf before you apply it.
 
 - Caller's usage first. Write the README-style usage and two or three real call sites before the types, then derive the type sketch from them. The usage is the spec. The two must agree, so reconcile the sketch to the usage, not the reverse.
 - Data structures first. Get the core types right and the code becomes obvious. Trace each dominant access pattern through the proposed structure. If the answer is "we'll add a map / index / cache later," the structure is wrong.

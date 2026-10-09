@@ -59,7 +59,7 @@ Group the combined signals into sections. Common ones (use only what applies):
 - **Process**: git worktrees, commits, PRs, review/merge tooling.
 - **Skills**: skill-authoring habits, fix-the-skill-first, proposing new skills.
 
-The **p3-mode** skill shows the shape. Read it for granularity. Don't copy its content. The user's rules are not the same as p3-mode's.
+The [p3-mode](../p3-mode/SKILL.md) skill shows the shape. Read it for granularity. Don't copy its content. The user's rules are not the same as p3-mode's.
 
 ### 4. Draft the skill
 
