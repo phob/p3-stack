@@ -10,7 +10,7 @@ param(
     [switch]$RoutingControl,
     [int]$RoutingRuns = 2,
     [int]$Throttle = 4,
-    [string]$Model = 'claude-sonnet-5-5',
+    [string]$Model = 'claude-haiku-5-5',
     [string]$RoutingModel = 'claude-opus-5-5',
     [switch]$KeepProject
 )
@@ -65,15 +65,27 @@ if ($unexpected.Count -eq 0 -and $unflaggedEntry.Count -eq 0 -and $missingFm.Cou
     Add-Result 'T1 static-flag' "$($skillNames.Count) skills" 'FAIL' "unexpected flag: [$($unexpected -join ', ')]; entry not flagged: [$($unflaggedEntry -join ', ')]; no frontmatter: [$($missingFm -join ', ')]"
 }
 
-# T2 static-refs
+# T2 static-refs: every skill a skill names exists, and model-invocable names are not flagged.
+# p3-help names /orchestrate only to say p3-stack has no such skill.
+$namedAbsent = @('orchestrate')
+$skillMds = @(Get-ChildItem -Path $skillsDir -Recurse -Filter '*.md')
+$fence = '(?ms)^(`{3,})([a-z]*)[^\n]*\n(.*?)^\1[ \t]*\r?$'
+function Split-SkillText([System.IO.FileInfo]$File) {
+    # Fenced blocks are sample output, except markdown fences: templates an agent copies out of the skill.
+    $raw = Get-Content -LiteralPath $File.FullName -Raw
+    $templates = @([regex]::Matches($raw, $fence) | Where-Object { $_.Groups[2].Value -in 'markdown', 'md' } | ForEach-Object { $_.Groups[3].Value })
+    [pscustomobject]@{ Prose = [regex]::Replace($raw, $fence, ''); Template = $templates -join "`n" }
+}
 $refs = [System.Collections.Generic.SortedSet[string]]::new()
-foreach ($md in Get-ChildItem -Path (Join-Path $skillsDir 'p3-mode') -Recurse -Filter '*.md') {
-    $text = Get-Content -LiteralPath $md.FullName -Raw
+foreach ($md in $skillMds) {
+    $parts = Split-SkillText $md
+    $text = $parts.Prose + "`n" + $parts.Template
+    foreach ($m in [regex]::Matches($text, 'the \*\*([a-z0-9-]+)\*\* principle skill')) { [void]$refs.Add("principle-$($m.Groups[1].Value)") }
     foreach ($pattern in 'the \*\*([a-z0-9-]+)\*\* skill', '\*\*(principle-[a-z0-9-]+)\*\*', '`/([a-z0-9-]+)`') {
         foreach ($m in [regex]::Matches($text, $pattern)) { [void]$refs.Add($m.Groups[1].Value) }
     }
 }
-$badRefs = @($refs | Where-Object {
+$badRefs = @($refs | Where-Object { $_ -notin $namedAbsent } | Where-Object {
         $path = Join-Path $skillsDir "$_\SKILL.md"
         -not (Test-Path $path) -or (($_ -notin $userOnly) -and (Test-Flagged $path))
     })
@@ -81,6 +93,77 @@ if ($refs.Count -gt 0 -and $badRefs.Count -eq 0) {
     Add-Result 'T2 static-refs' "$($refs.Count) refs" 'PASS' ($refs -join ', ')
 } else {
     Add-Result 'T2 static-refs' "$($refs.Count) refs" 'FAIL' "missing or flagged: $($badRefs -join ', ')"
+}
+
+# T2 static-paths: every file a skill names resolves from the installed link, where only skills/ exists.
+$skillsRoot = [System.IO.Path]::GetFullPath($skillsDir).TrimEnd('\') + '\'
+function Test-InstalledPath([string]$Base, [string]$Target) {
+    $full = [System.IO.Path]::GetFullPath((Join-Path $Base ($Target -replace '/', '\'))).TrimEnd('\')
+    if (-not $full.StartsWith($skillsRoot)) { return $false }
+    # Test-Path ignores case on Windows; installs on Linux and macOS do not, so match each segment exactly.
+    $dir = $skillsRoot.TrimEnd('\')
+    foreach ($part in $full.Substring($skillsRoot.Length) -split '\\') {
+        if (-not (Test-Path -LiteralPath $dir -PathType Container)) { return $false }
+        if (-not @([System.IO.Directory]::GetFileSystemEntries($dir) | Where-Object { [System.IO.Path]::GetFileName($_) -ceq $part })) { return $false }
+        $dir = Join-Path $dir $part
+    }
+    return $true
+}
+# A path ends at the closing backtick or at the first argument after it.
+$tickPath = '`([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+\.(?:md|sh|ps1|tsv|json|py))[` ]'
+# ./ marks a command run from a clone of this repo; the rest are paths in the user's project, not in a skill.
+$outsideInstall = '^(\./|\.claude/|\.agents/|\.audit/|docs/)'
+$flaggedEntries = @($entryPoints | ForEach-Object { [regex]::Escape($_) }) -join '|'
+$pathProblems = [System.Collections.Generic.List[string]]::new()
+$pathCount = 0
+foreach ($md in $skillMds) {
+    $rel = $md.FullName.Substring($skillsRoot.Length)
+    $skillName = ($rel -split '\\')[0]
+    $skillRoot = Join-Path $skillsRoot $skillName
+    $parts = Split-SkillText $md
+    $text = $parts.Prose
+    # Markdown links resolve relative to the file.
+    foreach ($m in [regex]::Matches($text, '\]\(([^)\s#]+)(#[^)]*)?\)')) {
+        $target = $m.Groups[1].Value
+        # Template placeholders such as (url) name no file.
+        if ($target -match '^[a-z]+:' -or $target -notmatch '[/.]') { continue }
+        $pathCount++
+        if (-not (Test-InstalledPath $md.DirectoryName $target)) { $pathProblems.Add("${rel}: link $target") }
+    }
+    # Backtick paths with a directory resolve relative to the skill folder.
+    foreach ($m in [regex]::Matches($text, $tickPath)) {
+        $target = $m.Groups[1].Value
+        if ($target -match $outsideInstall) { continue }
+        $pathCount++
+        if (-not (Test-InstalledPath $skillRoot $target)) { $pathProblems.Add("${rel}: path $target") }
+    }
+    # A template is read from wherever the agent writes it, so a skill path in it must be absolute: <skills>/...
+    foreach ($m in [regex]::Matches($parts.Template, $tickPath)) {
+        if ($m.Groups[1].Value -notmatch $outsideInstall) { $pathProblems.Add("${rel}: template path $($m.Groups[1].Value) needs <skills>/") }
+    }
+    # Flagged principles are unlisted under Claude Code, so outside p3-mode a principle needs a path, not a bare name.
+    $statesLeafPath = $text.Contains('principle-<name>/SKILL.md')
+    if ($skillName -ne 'p3-mode' -and -not $statesLeafPath) {
+        foreach ($m in [regex]::Matches($text, '\*\*(?:principle-)?([a-z0-9-]+)\*\*')) {
+            if (Test-Path (Join-Path $skillsRoot "principle-$($m.Groups[1].Value)")) { $pathProblems.Add("${rel}: bare principle $($m.Value)") }
+        }
+    }
+    # The Skill tool refuses flagged entry points too: other skills link them or tell the user to type /name.
+    foreach ($m in [regex]::Matches($text, "\*\*($flaggedEntries)\*\*|(?<![\[/])``($flaggedEntries)``(?!\]\()")) {
+        $name = "$($m.Groups[1].Value)$($m.Groups[2].Value)"
+        if ($name -ne $skillName) { $pathProblems.Add("${rel}: bare flagged skill $($m.Value)") }
+    }
+    if ($md.Name -eq 'SKILL.md' -and $text.Contains('p3-models.md') -and -not $text.Contains('~/.agents/p3-models.md')) {
+        $pathProblems.Add("${rel}: names p3-models.md without its global fallback")
+    }
+    foreach ($line in @($text -split "`n" | Where-Object { $_.Contains('AGENTS.md') -and -not $_.Contains('CLAUDE.md') })) {
+        $pathProblems.Add("${rel}: AGENTS.md without CLAUDE.md")
+    }
+}
+if ($pathCount -gt 0 -and $pathProblems.Count -eq 0) {
+    Add-Result 'T2 static-paths' "$pathCount paths in $($skillMds.Count) files" 'PASS' ''
+} else {
+    Add-Result 'T2 static-paths' "$pathCount paths in $($skillMds.Count) files" 'FAIL' ($pathProblems -join '; ')
 }
 
 # T3 installer

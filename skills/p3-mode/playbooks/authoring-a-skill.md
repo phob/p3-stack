@@ -2,7 +2,7 @@
 
 **You own the skill's voice.**
 
-1. Write `SKILL.md` with `name` and `description` frontmatter. Keep it thin, follow the repo's AGENTS.md conventions, test the description trigger, and reference other skills by path.
+1. Write `SKILL.md` with `name` and `description` frontmatter. Keep it thin, follow the repo's AGENTS.md or CLAUDE.md conventions, test the description trigger, and reference other skills by path.
 2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
 3. Test cases if structural. Skip if subjective.
 4. Run **Opening a PR**.

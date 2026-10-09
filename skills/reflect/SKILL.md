@@ -23,7 +23,7 @@ Reviewers get only their brief, never the parent's context. Pass the thread id a
 
 One turn, three `delegate_task` calls with `mode: "async"`. Reviewers need tool access for context lookups (tickets, chat threads, observability traces referenced in the transcript), so do not restrict their tools.
 
-Resolve each model from the role line in `p3-models.md` via `orchestrator_capabilities`. Never hardcode a slug.
+Resolve each model from the role line in `p3-models.md` (project root, else `~/.agents/p3-models.md`) via `orchestrator_capabilities`. Never hardcode a slug.
 
 | Lens | Role line | Prompt template |
 |---|---|---|
@@ -39,7 +39,7 @@ One `delegate_task` call, model from the `reflect judgment, divergent, synthesiz
 
 ### 4. Structural enforcement check
 
-Sanity-check the synthesizer's Accepted list. For any item that would be enforced more reliably by a lint rule, script, metadata flag, or runtime check, move it from Accepted to Backlog. See the **encode-lessons-in-structure** principle skill.
+Sanity-check the synthesizer's Accepted list. For any item that would be enforced more reliably by a lint rule, script, metadata flag, or runtime check, move it from Accepted to Backlog. See the [encode-lessons-in-structure](../principle-encode-lessons-in-structure/SKILL.md) principle skill.
 
 ### 5. Apply
 

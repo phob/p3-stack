@@ -47,7 +47,7 @@ architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, 
 
 ## Principles
 
-The twenty-four principle skills are indexed inside `p3-mode` and referenced by the other skills by name.
+The twenty-four principle skills are indexed inside `p3-mode` and referenced by the other skills by relative link.
 
 ## Credit
 

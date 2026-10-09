@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Setup p3
 
-Write `p3-models.md`, a file that sets p3-stack's model per role. Default location is the current project root. Offer `~/.agents/p3-models.md` as the global option, and ask which one. A project file wins over the global one.
+Write `p3-models.md`, a file that sets p3-stack's model per role. Default location is the current project root. Offer `~/.agents/p3-models.md` as the global option, and ask which one. A project file wins over the global one. Every skill reads it in that order: project root, then `~/.agents/p3-models.md`.
 
 ## Steps
 
