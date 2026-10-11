@@ -101,3 +101,5 @@ Present the verdict in this structure:
 
 ### Agreement Map
 [Where did models agree, where did they diverge, and what does the pattern of agreement/disagreement tell us?]
+
+With three or more reviewers, render the map as a findings-by-reviewer grid, each cell showing whether that reviewer raised the finding and the bucket it landed in. Check it with `html_preview`, publish it with `html_render`, and keep the prose read below it.

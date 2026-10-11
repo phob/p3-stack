@@ -40,4 +40,4 @@ Keep a compact result table, one-line evidenced issues, and explicit gaps or dro
 
 ## Phase D: Report
 
-Return one consolidated in-chat report with the table, issue one-liners, gaps or dropouts, and the race rule when used.
+Return one consolidated in-chat report with the table, issue one-liners, gaps or dropouts, and the race rule when used. Past about eight workers, render the table with `html_preview` then `html_render`, one row per worker with its status and evidence, and keep the issue one-liners in the reply.
