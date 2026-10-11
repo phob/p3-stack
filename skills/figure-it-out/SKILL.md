@@ -40,7 +40,7 @@ Apply the [sequence-verifiable-units](../principle-sequence-verifiable-units/SKI
 
 - Verify by inspecting the artifact, never a self-report. When something passes too easily, suspect the observation method before the system.
 - Pair delegated work with a judge. If a worker games the gate, reset and harden the contract. If the gate itself is wrong, fix the gate in its own change rather than routing around it.
-- Drain background work with `task_status`. For a PR in flight, arm `watch_pull_request`, end the turn, and triage on wake; use `schedule_task` for recurring checks.
+- Drain background work on wake. End the turn and T3 delivers each result. Call `task_status` only for a result this turn cannot continue without. For a PR in flight, arm `watch_pull_request`, end the turn, and triage on wake; use `schedule_task` for recurring checks.
 - A verdict is VERIFIED, NOT VERIFIED, or INCONCLUSIVE. Inconclusive is not a pass. Don't hide a negative.
 
 ## Phase D: Keep the audit trail

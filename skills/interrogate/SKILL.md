@@ -47,7 +47,7 @@ Read `references/reviewer-prompt.md` and fill in the template with:
 3. The review rubric from `references/rubric.md`
 4. The code-quality lens from `references/code-quality-review.md`
 
-The same filled template goes to all reviewers, so every model applies the code-quality lens. Drain results with `task_status`.
+The same filled template goes to all reviewers, so every model applies the code-quality lens. End the turn and take each reviewer's result from its completion wake.
 
 ## Step 4, Synthesize
 

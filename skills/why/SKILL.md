@@ -76,7 +76,7 @@ Source control is always available through git and `gh`. For the other six, clas
 
 Aim for a complete **coverage map**, not a minimal one. Document the null, don't skip the search.
 
-Issue every matching `delegate_task` call (`mode: "async"`) in a single turn so they run concurrently, then drain with `task_status`. Don't ask one investigator to cover multiple MCPs.
+Issue every matching `delegate_task` call (`mode: "async"`) in a single turn so they run concurrently, then end the turn and take each result from its completion wake. Don't ask one investigator to cover multiple MCPs.
 
 Delegation config (each):
 - Provider and model: the `why investigators` line.

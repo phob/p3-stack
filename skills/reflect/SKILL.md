@@ -31,7 +31,7 @@ Resolve each model from the role line in `p3-models.md` (project root, else `~/.
 | Tooling | `reflect tooling` | `references/tooling-reviewer.md` |
 | Divergent | `reflect judgment, divergent, synthesizer` | `references/divergent-reviewer.md` |
 
-Pass each template verbatim as the brief, substituting the thread id or digest where marked. Drain with `task_status`; reviewers return findings in their task result.
+Pass each template verbatim as the brief, substituting the thread id or digest where marked. End the turn and take each result from its completion wake; reviewers return findings in their task result.
 
 ### 3. Synthesize
 
