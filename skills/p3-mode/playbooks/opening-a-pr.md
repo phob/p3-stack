@@ -27,6 +27,8 @@ After these sections, attach videos or screenshots when they prove a claim. Do n
 
 **Built-in PR tool.** T3's built-in PR tool is `link_pull_request`, and it registers a PR rather than creating one. Call it with the full URL the moment a PR opens, and link every layer of a stack; a PR created through `gh` is untracked until it is linked. `list_thread_pull_requests` returns the stack bottom to top. Create, edit, retarget, and mark ready through `gh`.
 
+**Review guide.** Once a PR is linked and ready, call `write_pull_request_guides` with its `repository` and `number`. The URL form can fail with a misleading error. A stack passes every layer in one call, up to 20. A guide is the tour a reviewer reads in T3's Guide tab. It takes minutes and runs on its own, so do not wait for it. If the result says guides are off, say so once in the reply and move on. Never change the setting.
+
 **Size and stacks.** Prefer five narrow PRs to one large PR. A stack is a base-branch chain. The root PR targets trunk. Each child branch rebases onto its parent's exact tip and its PR targets the parent branch. Create a child with `gh pr create --base <parent-branch>`, and retarget an existing child with `gh pr edit <pr> --base <parent-branch>`. Branch from trunk only for independent work. Rebase on trunk before substantial stack work.
 
 **Readiness.** Open every PR ready, never as a draft. With `gh`, omit `--draft`. If a PR still opens as a draft, run `gh pr ready <number>`. Run `gh pr view <number>` before you refer to PR status.
