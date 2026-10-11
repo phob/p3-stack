@@ -128,7 +128,7 @@ foreach ($md in $skillMds) {
     foreach ($m in [regex]::Matches($text, '\]\(([^)\s#]+)(#[^)]*)?\)')) {
         $target = $m.Groups[1].Value
         # Template placeholders such as (url) name no file.
-        if ($target -match '^[a-z]+:' -or $target -notmatch '[/.]') { continue }
+        if ($target -match '^[a-z][a-z0-9+.-]*:' -or $target -notmatch '[/.]') { continue }
         $pathCount++
         if (-not (Test-InstalledPath $md.DirectoryName $target)) { $pathProblems.Add("${rel}: link $target") }
     }
