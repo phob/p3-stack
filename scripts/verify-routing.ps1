@@ -21,6 +21,8 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $skillsDir = Join-Path $repo 'skills'
 $entryPoints = @('p3-mode', 'setup-p3')
+# User-typed commands with no routing role; the model must not invoke them.
+$userCommands = @('bro')
 $defaultList = @(
     'how', 'why', 'architect', 'swarm', 'arena', 'interrogate', 'unslop', 'no-comments',
     'technical-writing', 'benchmark-checklist', 'show-me-your-work', 'figure-it-out', 'tdd'
@@ -52,7 +54,7 @@ function Test-Flagged([string]$Path) {
 $skillNames = @(Get-ChildItem -Directory -Path $skillsDir | Where-Object { Test-Path (Join-Path $_.FullName 'SKILL.md') } | ForEach-Object Name)
 $skillFileCountBefore = @(Get-ChildItem -Path $skillsDir -Recurse -File).Count
 # Principles stay flagged so their descriptions stay out of every session's skill listing.
-$userOnly = @($entryPoints + @($skillNames | Where-Object { $_ -like 'principle-*' }))
+$userOnly = @($entryPoints + $userCommands + @($skillNames | Where-Object { $_ -like 'principle-*' }))
 
 # T1 static-flag
 $flagged = @($skillNames | Where-Object { Test-Flagged (Join-Path $skillsDir "$_\SKILL.md") })
