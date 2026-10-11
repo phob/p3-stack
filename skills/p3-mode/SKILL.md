@@ -98,6 +98,8 @@ You own every delegate's work. Review the diff and write your own summary, don't
 
 **Own every wake you arm.** A schedule or PR watch keeps waking this thread after the work it served is gone. Give each `schedule_task` a `title` naming the run. Before arming, check `list_scheduled_tasks` and reuse the run's existing tick, so a resumed run never arms a second one. When the run ends, delete its ticks with `delete_scheduled_task` and drop its watches with `unwatch_pull_request`. A pause disables ticks with `update_scheduled_task` (`enabled: false`) and does not delete them.
 
+**Keep the user's inbox honest.** Every `t3_thread_launch` title names its unit, so the sidebar reads as the work. Once a launched thread's result is recorded and nothing still runs in it (no dev server, simulator, or PR watch), settle it with `t3_thread_organize` (`settle`). The user's active list then holds only threads that need them. Never settle or archive a thread you did not launch.
+
 ## Writing the reply
 
 Write the reply clean as you draft it. A cleanup pass after drafting does not remove these patterns.
