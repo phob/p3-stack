@@ -33,7 +33,7 @@ Spawn all N candidates in one turn with `delegate_task`, one per runner entry, e
 
 Each rationale names the alternatives the candidate considered and what it rejected.
 
-Drain the candidates with `task_status`. If a candidate fails to produce output, proceed with N-1 and note the dropout in the synthesis record.
+End the turn and take each candidate's result from its completion wake. If a candidate fails to produce output, proceed with N-1 and note the dropout in the synthesis record.
 
 ## Phase C: Cross-judge
 
