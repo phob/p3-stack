@@ -29,7 +29,7 @@ Create `orchestrate/<project-slug>/` in the current project. Every file has exac
 
 - `preferences.md` is the standing-orders register: numbered lines, one constraint each (model policy, stack shape and count, verification bar, forbidden paths, escalation policy). Paste it verbatim into every spawn and every resume. Directives decay across resumes, and each dropped one costs a human turn. When you catch yourself restating an instruction, append the line before you act (principle-encode-lessons-in-structure).
 - `overview.md` is the durable PR and issue DB. Append. Never rewrite wholesale per event.
-- `units.tsv` has one row per unit: id, track, state, branch, PR, head SHA, brief path. Update rows in place.
+- `units.tsv` has one row per unit: id, track, state, branch, PR, head SHA, brief path, the current `clientRequestId` (`<program>-<unit>-<round>`), and the `taskId` or `threadId` it returned. Update rows in place.
 - `frontier.json` is the computed merge frontier, per Stack safety.
 - `ledger.tsv` is the verification ledger, per Verification.
 - `inbox/` holds completion pointers. `gates.md` parks human gates (question, options, default on no answer).
@@ -103,7 +103,7 @@ A unit is not done until its output is externalized the moment it lands, never b
 - A zombie that returns hours late reconciles against the current frontier and ledger before anything is accepted. Salvage unique findings through a fresh unit, never a blind merge.
 - When continued spawning would produce garbage tree-wide (bad upstream output, broken acceptance, dead infra), write a stop line at the top of the standing orders, let in-flight work finish, fix the cause, clear it.
 - Bound your own infra retries the same way you bound a child's. After a few consecutive tool aborts, stop retrying. Write a terminal handoff to durable state (what is done, where it lives, the exact command to resume) and end the run.
-- After a restart, delegated tasks and local threads may be gone, pushed branches are not. Re-read the standing orders and `units.tsv`, recompute the frontier, reattach work by PR and branch, respawn one sub-coordinator per track from its stored brief plus current state, drain, resume.
+- After a restart, delegated tasks and local threads may be gone, pushed branches are not. Re-read the standing orders and `units.tsv`, recompute the frontier, re-issue any spawn whose result never arrived with its recorded `clientRequestId` (T3 returns the live task rather than a second one), find launched threads in `t3_thread_list` before relaunching, reattach work by PR and branch, respawn one sub-coordinator per track from its stored brief plus current state, drain, resume.
 
 #### Escalation
 
