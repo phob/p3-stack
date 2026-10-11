@@ -22,7 +22,7 @@ $repo = Split-Path $PSScriptRoot -Parent
 $skillsDir = Join-Path $repo 'skills'
 $entryPoints = @('p3-mode', 'setup-p3')
 # User-typed commands with no routing role; the model must not invoke them.
-$userCommands = @('bro')
+$userCommands = @('bro', 'ketchup')
 $defaultList = @(
     'how', 'why', 'architect', 'swarm', 'arena', 'interrogate', 'unslop', 'no-comments',
     'technical-writing', 'benchmark-checklist', 'show-me-your-work', 'figure-it-out', 'tdd'
