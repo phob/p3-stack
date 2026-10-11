@@ -97,6 +97,22 @@ if ($refs.Count -gt 0 -and $badRefs.Count -eq 0) {
     Add-Result 'T2 static-refs' "$($refs.Count) refs" 'FAIL' "missing or flagged: $($badRefs -join ', ')"
 }
 
+# T2 principle-index: p3-mode names most principles only by title; each title must derive to a real leaf, and every leaf must be indexed.
+$modeText = Get-Content -LiteralPath (Join-Path $skillsDir 'p3-mode\SKILL.md') -Raw
+$indexText = ($modeText -split '(?m)^## Principles', 2)[1] -split '(?m)^## ', 2 | Select-Object -First 1
+$indexed = foreach ($m in [regex]::Matches($indexText, '(?m)^- \*\*([^*]+?)\.?\*\*(?: \(\*\*(principle-[a-z0-9-]+)\*\*\))?')) {
+    if ($m.Groups[2].Success) { $m.Groups[2].Value }
+    else { 'principle-' + (($m.Groups[1].Value.ToLowerInvariant() -replace '[^a-z0-9 -]', '') -replace ' ', '-') }
+}
+$principleDirs = @($skillNames | Where-Object { $_ -like 'principle-*' })
+$unresolved = @($indexed | Where-Object { $_ -notin $principleDirs })
+$unindexed = @($principleDirs | Where-Object { $_ -notin $indexed })
+if (@($indexed).Count -gt 0 -and $unresolved.Count -eq 0 -and $unindexed.Count -eq 0) {
+    Add-Result 'T2 principle-index' "$(@($indexed).Count) entries" 'PASS' ''
+} else {
+    Add-Result 'T2 principle-index' "$(@($indexed).Count) entries" 'FAIL' "no leaf for: [$($unresolved -join ', ')]; not indexed: [$($unindexed -join ', ')]"
+}
+
 # T2 static-paths: every file a skill names resolves from the installed link, where only skills/ exists.
 $skillsRoot = [System.IO.Path]::GetFullPath($skillsDir).TrimEnd('\') + '\'
 function Test-InstalledPath([string]$Base, [string]$Target) {
