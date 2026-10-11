@@ -107,6 +107,7 @@ Write the reply clean as you draft it. A cleanup pass after drafting does not re
 - **A colon as a mid-sentence connector is also out** (unslop rule 14). A colon before a list is fine.
 - **Terse is not an excuse to drop content.** Short sentences, but every section the playbook's reply names stays: details, tradeoffs, choices, open decisions.
 - **Frame impact for the consumer and the maintainer.** Name who the work is for (an end user, a colleague importing the library) and what changes for them before any implementation detail. Then what the next engineer who owns this code inherits. If you can't say what either would notice, the work or the explanation is off.
+- **Render what prose can't carry.** A table past about eight rows, a chart, a stack diagram, or a before-and-after comparison becomes a self-contained page. Check it with `html_preview`, then publish it with `html_render` before the reply. The page uses the theme variables T3 injects and no outer card. The reply adds only what the page doesn't say. The page is a view. The numbers stay in the store files and the trail.
 - **Never fabricate a link, citation, or thread reference.** Link only artifacts you produced or read this session.
 - **Every claim carries its evidence or its label in the same sentence.** Measured, inferred, or guess. A prediction or an unseen cause is a guess. Never hand the human a check you could run.
 
