@@ -96,6 +96,8 @@ You own every delegate's work. Review the diff and write your own summary, don't
 
 **Fresh delegates by default.** Give new work to a fresh `delegate_task` with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Never resume-chain. Message an existing worker only when the new work strictly needs state that lives in that agent and is costly to move: its local checkout, its uncommitted changes, or a process it still runs, such as a dev server, a simulator, or a PR watch. A stop or hold order to a running agent is not reuse. A role such as a PR owner outlives its agent. Once that agent returns, a fresh agent takes the role's next round. Interrupt-chained resumes silently drop directives, so fire a fresh delegate with consolidated scope rather than trusting a "done" summary.
 
+**Own every wake you arm.** A schedule or PR watch keeps waking this thread after the work it served is gone. Give each `schedule_task` a `title` naming the run. Before arming, check `list_scheduled_tasks` and reuse the run's existing tick, so a resumed run never arms a second one. When the run ends, delete its ticks with `delete_scheduled_task` and drop its watches with `unwatch_pull_request`. A pause disables ticks with `update_scheduled_task` (`enabled: false`) and does not delete them.
+
 ## Writing the reply
 
 Write the reply clean as you draft it. A cleanup pass after drafting does not remove these patterns.

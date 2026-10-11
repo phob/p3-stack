@@ -100,6 +100,7 @@ Each live lane is a delegated worker at the PR head. Use `t3_thread_launch` with
 
 ## Close the program
 - [ ] Every box above is checked with its evidence.
+- [ ] The audit tick is deleted with `delete_scheduled_task`, and no PR watch is left armed.
 - [ ] Reply to the operator with the report the execution playbook names.
 
 ## Appendix A. Prototype evidence
